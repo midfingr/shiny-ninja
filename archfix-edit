@@ -421,7 +421,7 @@ function partitioning() {
   dd if=/dev/zero of=$HDD_NAME  bs=512  count=1
   
   touch /tmp/fdisk.input
-  echo -e "n\np\n1\n\n+"$ROOT_SIZE"K\nw" > /tmp/fdisk.input
+  echo -e "n\np\n1\n\n+"$ROOT_SIZE"K\nn\np\n1\n\nw" > /tmp/fdisk.input
   
   # Create Partitions
   fdisk $HDD_NAME < /tmp/fdisk.input

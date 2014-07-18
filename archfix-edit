@@ -94,7 +94,7 @@ function first_choise() {
 #    install_lightdm
     
     #clean package cache
-    pacman -Scc --noconfirm
+     pacman -Scc --noconfirm
     
 #    install_plank
 #    install_archey
@@ -109,7 +109,7 @@ function first_choise() {
 #    install_video_tools_and_codec
     
     #clean package cache
-    pacman -Scc --noconfirm
+     pacman -Scc --noconfirm
 #    install_fonts
 #    install_java
 #    install_internet_tools
@@ -421,7 +421,7 @@ function partitioning() {
   dd if=/dev/zero of=$HDD_NAME  bs=512  count=1
   
   touch /tmp/fdisk.input
-  echo -e "$ROOT_SIZE"K\nn\np\n4\n\n+" > /tmp/fdisk.input
+  echo -e "n\np\n1\n\n+"$ROOT_SIZE"K\nw" > /tmp/fdisk.input
   
   # Create Partitions
   fdisk $HDD_NAME < /tmp/fdisk.input
@@ -507,11 +507,11 @@ function install_base() {
   cd
   cp -r archfix-edit/ /mnt/root/
   
-  umount $HDD_NAME'1'
+   umount $HDD_NAME'1'
 #  umount $HDD_NAME'3'
 #  umount $HDD_NAME'4'
   
-  reboot #<< end
+#  reboot #<< end
   return 0
 }
 

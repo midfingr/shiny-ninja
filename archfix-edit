@@ -407,7 +407,7 @@ function partitioning() {
 #  echo 'boot: '$BOOT_SIZE ' MB'
    echo 'root: '$ROOT_SIZE ' MB'
 #  echo 'home: '$HOME_SIZE ' MB'
-#  echo ''
+   echo ''
 #  echo 'swap: '$SWAP_SIZE ' MB'
   echo '-----------------------'
   
@@ -421,7 +421,7 @@ function partitioning() {
   dd if=/dev/zero of=$HDD_NAME  bs=512  count=1
   
   touch /tmp/fdisk.input
-  echo -e "n\np\n1\n\n+"$ROOT_SIZE"K\nn\np\n1\n\nw" > /tmp/fdisk.input
+  echo -e "$ROOT_SIZE"K\nn\np\n1\n\nw" > /tmp/fdisk.input
   
   # Create Partitions
   fdisk $HDD_NAME < /tmp/fdisk.input

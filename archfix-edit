@@ -23,10 +23,10 @@ RESULT=0
 COUNTER=0
 TOTAL_HDD_SIZE=0
 TOTAL_RAM_SIZE=0
-#SWAP_SIZE=0
+SWAP_SIZE=0
 ROOT_SIZE=0
-#HOME_SIZE=0
-#BOOT_SIZE=200
+HOME_SIZE=0
+BOOT_SIZE=200
 PID=0
 HOSTNAME=''
 LANGUAGE=''
@@ -374,10 +374,21 @@ function get_total_ram_size() {
   return 0
 }
 
+function calc_optimal_swap_size() {
+  get_total_ram_size
+  if [ $TOTAL_RAM_SIZE -lt 513 ]
+  then
+    SWAP_SIZE=$(($TOTAL_RAM_SIZE * 2))
+  else
+    SWAP_SIZE=$TOTAL_RAM_SIZE
+  fi
+  return 0
+}
+
 function calc_optimal_patition_size() {
-#  TOTAL_HDD_SIZE=$(($TOTAL_HDD_SIZE - $BOOT_SIZE))
-   ROOT_SIZE=$(($TOTAL_HDD_SIZE * 100 / 100))
-#  HOME_SIZE=$(($TOTAL_HDD_SIZE - $ROOT_SIZE))
+   TOTAL_HDD_SIZE=$(($TOTAL_HDD_SIZE - $BOOT_SIZE))
+   ROOT_SIZE=$(($TOTAL_HDD_SIZE * 20 / 100))
+   HOME_SIZE=$(($TOTAL_HDD_SIZE - $ROOT_SIZE))
   return 0
 }
 
@@ -393,7 +404,7 @@ function partitioning() {
   echo "******************************************************"
   echo ""
   sleep 2
-#  calc_optimal_swap_size
+  calc_optimal_swap_size
   echo "On which drive you want to install Arch?"
   eval CHOISE_ARRAY=("/dev/"$(lsblk | grep disk | cut -d" " -f1) )
   choise_menu
@@ -404,24 +415,24 @@ function partitioning() {
   get_total_hdd_size $HDD_NAME
   calc_optimal_patition_size
   echo '-----------------------'
-#  echo 'boot: '$BOOT_SIZE ' MB'
-   echo 'root: '$ROOT_SIZE ' MB'
-#  echo 'home: '$HOME_SIZE ' MB'
-   echo ''
-#  echo 'swap: '$SWAP_SIZE ' MB'
+  echo 'boot: '$BOOT_SIZE ' MB'
+  echo 'root: '$ROOT_SIZE ' MB'
+  echo 'home: '$HOME_SIZE ' MB'
+  echo ''
+  echo 'swap: '$SWAP_SIZE ' MB'
   echo '-----------------------'
   
   #Back to KB Sizes
-#  BOOT_SIZE=$(($BOOT_SIZE * 1024))
-   ROOT_SIZE=$(($ROOT_SIZE * 1024))
-#  HOME_SIZE=$(($HOME_SIZE * 1024))
-#  SWAP_SIZE=$(($SWAP_SIZE * 1024))
+  BOOT_SIZE=$(($BOOT_SIZE * 1024))
+  ROOT_SIZE=$(($ROOT_SIZE * 1024))
+  HOME_SIZE=$(($HOME_SIZE * 1024))
+  SWAP_SIZE=$(($SWAP_SIZE * 1024))
   
   #Wiping the entire disk
   dd if=/dev/zero of=$HDD_NAME  bs=512  count=1
   
   touch /tmp/fdisk.input
-  echo -e "$ROOT_SIZE"K\nn\np\n1\n\nw" > /tmp/fdisk.input
+  echo -e "n\np\n1\n\n+"$BOOT_SIZE"K\na\n1\nn\np\n2\n\n+"$SWAP_SIZE"K\nt\n2\n82\nn\np\n3\n\n+"$ROOT_SIZE"K\nn\np\n4\n\n+"$HOME_SIZE"K\nn\np\n5\n\nw" > /tmp/fdisk.input
   
   # Create Partitions
   fdisk $HDD_NAME < /tmp/fdisk.input
@@ -429,13 +440,21 @@ function partitioning() {
   # Remove fdisk.input file
   rm /tmp/fdisk.input
   
-
-   mkfs.ext4 -L root $HDD_NAME'1'
+  mkfs.ext2 -L boot $HDD_NAME'1'
+  mkswap -L swap $HDD_NAME'2'
+  mkfs.ext4 -L root $HDD_NAME'3'
+  mkfs.ext4 -L home $HDD_NAME'4'
   
- 
+  #enable swap
+  swapon $HDD_NAME'2'
+  
   #mount all patitions
-   mount $HDD_NAME'1' /mnt
- 
+  mount $HDD_NAME'3' /mnt
+  mkdir /mnt/boot
+  mkdir /mnt/home
+  mount $HDD_NAME'1' /mnt/boot
+  mount $HDD_NAME'4' /mnt/home
+  
   #clean
   unset_menu_items
   return 0

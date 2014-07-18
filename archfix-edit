@@ -23,10 +23,10 @@ RESULT=0
 COUNTER=0
 TOTAL_HDD_SIZE=0
 TOTAL_RAM_SIZE=0
-SWAP_SIZE=0
+#SWAP_SIZE=0
 ROOT_SIZE=0
-HOME_SIZE=0
-BOOT_SIZE=200
+#HOME_SIZE=0
+#BOOT_SIZE=200
 PID=0
 HOSTNAME=''
 LANGUAGE=''
@@ -83,7 +83,7 @@ function first_choise() {
 #    install_pulse
 #    install_bash_goodies
 #    install_avahi_deamon
-#     install_ntfs_tools
+#    install_ntfs_tools
 #    install_openssh
 #    readahead_on
 #    install_xserver
@@ -112,9 +112,9 @@ function first_choise() {
     #clean package cache
     pacman -Scc --noconfirm
     pacman-optimize --noconfirm
-    install_fonts
+#    install_fonts
 #    install_java
-    install_internet_tools
+#    install_internet_tools
     
     #clean package cache
     pacman -Scc --noconfirm
@@ -377,17 +377,6 @@ function get_total_ram_size() {
   return 0
 }
 
-#function calc_optimal_swap_size() {
-#  get_total_ram_size
-#  if [ $TOTAL_RAM_SIZE -lt 513 ]
-#  then
-#    SWAP_SIZE=$(($TOTAL_RAM_SIZE * 2))
-#  else
-#    SWAP_SIZE=$TOTAL_RAM_SIZE
-#  fi
-#  return 0
-#}
-
 function calc_optimal_patition_size() {
 #  TOTAL_HDD_SIZE=$(($TOTAL_HDD_SIZE - $BOOT_SIZE))
    ROOT_SIZE=$(($TOTAL_HDD_SIZE * 100 / 100))
@@ -493,12 +482,6 @@ function install_base() {
   #create locales
   arch_chroot 'locale-gen'
   
-  #Install extra system stuff
-  arch_chroot "pacman --noconfirm -S networkmanager sudo wpa_supplicant"
-  
-  #enable NetworkManager
-  arch_chroot 'systemctl enable NetworkManager.service'
-  
   #enable mutilib
   MULTILIB=''
   ARCH=$(uname -m)
@@ -522,11 +505,6 @@ function install_base() {
   
   #configure Clock
   arch_chroot "hwclock --systohc --utc"
-  
-  #accountsservice Lightdm bugFix
-  arch_chroot "pacman --noconfirm -S accountsservice"
-  #git
-  arch_chroot "pacman --noconfirm -S git"
   
   #Enable Grub
   arch_chroot 'pacman --noconfirm -S grub'
@@ -552,3 +530,4 @@ function install_base() {
 }
 
 first_choise
+

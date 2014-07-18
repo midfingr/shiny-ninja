@@ -508,9 +508,9 @@ function install_base() {
   
   #Enable Grub
   arch_chroot 'pacman --noconfirm -S grub'
-  echo "" >> /mnt/etc/default/grub
-  echo "# fix broken grub.cfg gen" >> /mnt/etc/default/grub
-  echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
+#  echo "" >> /mnt/etc/default/grub
+#  echo "# fix broken grub.cfg gen" >> /mnt/etc/default/grub
+#  echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
   arch_chroot 'grub-install --target=i386-pc --recheck --debug '${HDD_NAME}
   arch_chroot 'grub-mkconfig -o /boot/grub/grub.cfg'
   

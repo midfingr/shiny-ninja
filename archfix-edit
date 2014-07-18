@@ -71,7 +71,7 @@ function first_choise() {
     partitioning
     install_base
   else
-#    unset_menu_items
+     unset_menu_items
 #    load_configs
 #    optimize_mirrorlist
 #    install_yaourt
@@ -95,7 +95,6 @@ function first_choise() {
     
     #clean package cache
     pacman -Scc --noconfirm
-    pacman-optimize --noconfirm
     
 #    install_plank
 #    install_archey
@@ -111,14 +110,12 @@ function first_choise() {
     
     #clean package cache
     pacman -Scc --noconfirm
-    pacman-optimize --noconfirm
 #    install_fonts
 #    install_java
 #    install_internet_tools
     
     #clean package cache
     pacman -Scc --noconfirm
-    pacman-optimize --noconfirm
     resecure_sudoers
     clear
     echo "finished!....."

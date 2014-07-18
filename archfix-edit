@@ -432,21 +432,13 @@ function partitioning() {
   # Remove fdisk.input file
   rm /tmp/fdisk.input
   
-#  mkfs.ext2 -L boot $HDD_NAME'1'
-#  mkswap -L swap $HDD_NAME'2'
+
    mkfs.ext4 -L root $HDD_NAME'1'
-#  mkfs.ext4 -L home $HDD_NAME'4'
   
-  #enable swap
-#  swapon $HDD_NAME'2'
-  
+ 
   #mount all patitions
    mount $HDD_NAME'1' /mnt
-#  mkdir /mnt/boot
-#  mkdir /mnt/home
-#  mount $HDD_NAME'1' /mnt/boot
-#  mount $HDD_NAME'4' /mnt/home
-  
+ 
   #clean
   unset_menu_items
   return 0
@@ -508,9 +500,6 @@ function install_base() {
   
   #Enable Grub
   arch_chroot 'pacman --noconfirm -S grub'
-#  echo "" >> /mnt/etc/default/grub
-#  echo "# fix broken grub.cfg gen" >> /mnt/etc/default/grub
-#  echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
   arch_chroot 'grub-install --target=i386-pc --recheck --debug '${HDD_NAME}
   arch_chroot 'grub-mkconfig -o /boot/grub/grub.cfg'
   

@@ -73,7 +73,7 @@ function first_choise() {
   else
      unset_menu_items
 #    load_configs
-    optimize_mirrorlist
+     optimize_mirrorlist
 #    install_yaourt
 #    user_config
      adduser
@@ -526,13 +526,13 @@ function install_base() {
   
   
   cd
-  cp -r archfix-edit/ /mnt/root/
+  cp -r shiny-ninja/ /mnt/root/
   
    umount $HDD_NAME'1'
 #  umount $HDD_NAME'3'
 #  umount $HDD_NAME'4'
   
-#  reboot #<< end
+  reboot #<< end
   return 0
 }
 

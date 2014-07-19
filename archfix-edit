@@ -526,7 +526,7 @@ function install_base() {
   
   
   cd
-  cp -r archfix/ /mnt/root/
+  cp -r archfix-edit/ /mnt/root/
   
    umount $HDD_NAME'1'
 #  umount $HDD_NAME'3'

@@ -73,10 +73,10 @@ function first_choise() {
   else
      unset_menu_items
 #    load_configs
-#    optimize_mirrorlist
+    optimize_mirrorlist
 #    install_yaourt
 #    user_config
-#    adduser
+     adduser
 #    install_powerpill
 #    install_compress_tools
 #    install_alsa
@@ -378,7 +378,7 @@ function calc_optimal_swap_size() {
   get_total_ram_size
   if [ $TOTAL_RAM_SIZE -lt 513 ]
   then
-    SWAP_SIZE=$(($TOTAL_RAM_SIZE * .5))
+    SWAP_SIZE=$(($TOTAL_RAM_SIZE * 0.5))
   else
     SWAP_SIZE=$TOTAL_RAM_SIZE
   fi
@@ -387,7 +387,7 @@ function calc_optimal_swap_size() {
 
 function calc_optimal_patition_size() {
    TOTAL_HDD_SIZE=$(($TOTAL_HDD_SIZE - $BOOT_SIZE))
-   ROOT_SIZE=$(($TOTAL_HDD_SIZE * 50 / 100))
+   ROOT_SIZE=$(($TOTAL_HDD_SIZE * 60 / 100))
    HOME_SIZE=$(($TOTAL_HDD_SIZE - $ROOT_SIZE))
   return 0
 }
@@ -526,17 +526,72 @@ function install_base() {
   
   
   cd
-# cp -r archfix/ /mnt/root/
+  cp -r archfix/ /mnt/root/
   
    umount $HDD_NAME'1'
-   umount $HDD_NAME'3'
-   umount $HDD_NAME'4'
-
+#  umount $HDD_NAME'3'
+#  umount $HDD_NAME'4'
   
-  
-# reboot #<< end
+#  reboot #<< end
   return 0
 }
+
+function optimize_mirrorlist() {
+  clear
+  echo "******************************************************"
+  echo "*************** optimizing mirrorlist! ***************"
+  echo "******************************************************"
+  echo ""
+  message_print 0 "******************************************************"
+  message_print 0 "*******please wait, this will take a few minutes!*****"
+  message_print 0 "******************************************************"
+  echo ""
+  
+  TFILE="/tmp/mirrorlist.tmp"
+  CCODE=${LANGUAGE:3:2}
+  URL="https://www.archlinux.org/mirrorlist/?country=${CCODE}&use_mirror_status=on"
+  
+  curl -so ${TFILE} ${URL}
+  sed -i 's/^#Server/Server/g' ${TFILE}
+  
+  echo -n " [working]... "
+  spinner "start"
+  rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist
+  sed -i '/^#/ d' /etc/pacman.d/mirrorlist
+  spinner "stop"
+  echo "";
+  echo "";
+  
+  pacman -Syy
+  return 0
+}
+
+function adduser() {
+  clear
+  echo "******************************************************"
+  echo "***************      Add USER!         ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  read -p "Enter username : " USERNAME
+  useradd -m -g users -G audio,lp,network,optical,scanner,storage,sys,video,power,wheel -d /home/$USERNAME -s /bin/bash $USERNAME
+  echo ""
+  message_print 0 "******************************************************"
+  message_print 0 "*****please enter a secure password for the user!*****"
+  message_print 0 "******************************************************"
+  echo ""
+  passwd $USERNAME
+  
+  ## Uncomment to allow members of group wheel to execute any command
+  sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/s/^#//' /etc/sudoers
+  return 0
+}
+
+function resecure_sudoers(){
+  sed -i "/%wheel ALL=(ALL) NOPASSWD: ALL/s/^\(.*\)/#\1/g"  /etc/sudoers
+  sed -i '/%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
+}
+
 
 first_choise
 

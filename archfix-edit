@@ -526,13 +526,13 @@ function install_base() {
   
   
   cd
-  cp -r archfix/ /mnt/root/
+# cp -r archfix/ /mnt/root/
   
-   umount $HDD_NAME'1'
-#  umount $HDD_NAME'3'
-#  umount $HDD_NAME'4'
+  umount /mnt -R
+
   
-#  reboot #<< end
+  
+# reboot #<< end
   return 0
 }
 

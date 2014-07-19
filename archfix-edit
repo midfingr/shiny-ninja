@@ -378,7 +378,7 @@ function calc_optimal_swap_size() {
   get_total_ram_size
   if [ $TOTAL_RAM_SIZE -lt 513 ]
   then
-    SWAP_SIZE=$(($TOTAL_RAM_SIZE * 2))
+    SWAP_SIZE=$(($TOTAL_RAM_SIZE * .5))
   else
     SWAP_SIZE=$TOTAL_RAM_SIZE
   fi
@@ -387,7 +387,7 @@ function calc_optimal_swap_size() {
 
 function calc_optimal_patition_size() {
    TOTAL_HDD_SIZE=$(($TOTAL_HDD_SIZE - $BOOT_SIZE))
-   ROOT_SIZE=$(($TOTAL_HDD_SIZE * 20 / 100))
+   ROOT_SIZE=$(($TOTAL_HDD_SIZE * 50 / 100))
    HOME_SIZE=$(($TOTAL_HDD_SIZE - $ROOT_SIZE))
   return 0
 }
@@ -513,6 +513,8 @@ function install_base() {
   
   #configure Clock
   arch_chroot "hwclock --systohc --utc"
+  #git
+  arch_chroot "pacman --noconfirm -S git"
   
   #Enable Grub
   arch_chroot 'pacman --noconfirm -S grub'
@@ -524,7 +526,7 @@ function install_base() {
   
   
   cd
-  cp -r archfix-edit/ /mnt/root/
+  cp -r archfix/ /mnt/root/
   
    umount $HDD_NAME'1'
 #  umount $HDD_NAME'3'
